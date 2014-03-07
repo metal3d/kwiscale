@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Kwiscale by metal3d</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Kwiscale</h1>
+        <h2>Web Middleware for Golang</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/metal3d/kwiscale/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/metal3d/kwiscale/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/metal3d/kwiscale" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="kwiscale" class="anchor" href="#kwiscale"><span class="octicon octicon-link"></span></a>kwiscale</h1>
+
+<p>Web Middleware for Golang</p>
+
+<p>At this time, Kwiscale is at the very begining of developpement. But you can test and give'em some pull-request to improve it.</p>
+
+<p>Check documentation: <a href="http://godoc.org/github.com/metal3d/kwiscale">http://godoc.org/github.com/metal3d/kwiscale</a></p>
+
+<h1>
+<a name="how-to-use" class="anchor" href="#how-to-use"><span class="octicon octicon-link"></span></a>How to use</h1>
+
+<p>Install with "go get" command:</p>
+
+<pre><code>go get github.com/metal3d/kwiscale
+</code></pre>
+
+<p>Create a project:</p>
+
+<pre><code>mkdir ~/myproject &amp;&amp; cd ~/myproject
+</code></pre>
+
+<p>The common way to create handlers is to append a package::</p>
+
+<pre><code>mkdir handlers
+vim handlers/index.go
+</code></pre>
+
+<p>Let's try an example:</p>
+
+<div class="highlight highlight-go"><pre><span class="kn">package</span> <span class="nx">handlers</span>
+
+<span class="kn">import</span> <span class="s">"github.com/metal3d/kwiscale"</span>
+
+<span class="c1">// this is the Index Handler that</span>
+<span class="c1">// is composed by a RequestHandler</span>
+<span class="kd">type</span> <span class="nx">IndexHandler</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="c1">// note this, we now use Tag to declare route Inside the Handler</span>
+    <span class="nx">kwiscale</span><span class="p">.</span><span class="nx">RequestHandler</span> <span class="s">`route:"/home"`</span>
+<span class="p">}</span>
+
+
+<span class="c1">// Factory, this is *mandatory* !</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">i</span> <span class="o">*</span><span class="nx">IndexHandler</span><span class="p">)</span> <span class="nx">New</span><span class="p">()</span> <span class="nx">kwiscale</span><span class="p">.</span><span class="nx">IRequestHandler</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">new</span><span class="p">(</span><span class="nx">IndexHandler</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">IndexHandler</span><span class="p">)</span> <span class="nx">Get</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">this</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="s">"Hello !"</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Then in you main.go::</p>
+
+<div class="highlight highlight-go"><pre>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">"github.com/metal3d/kwiscale"</span>
+    <span class="s">"./handlers"</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">h</span> <span class="o">:=</span> <span class="nx">handlers</span><span class="p">.</span><span class="nx">IndexHandler</span><span class="p">{}</span>
+    <span class="nx">kwiscale</span><span class="p">.</span><span class="nx">AddHandler</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">h</span><span class="p">)</span>
+
+    <span class="nx">kwiscale</span><span class="p">.</span><span class="nx">Serve</span><span class="p">(</span><span class="s">":8081"</span><span class="p">)</span> <span class="c1">//listen :8081</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Then run:</p>
+
+<pre><code>go run main.go
+</code></pre>
+
+<p>Visit <a href="http://127.0.0.1:8081/home">http://127.0.0.1:8081/home</a> and you should see "Hello"</p>
+
+<h1>
+<a name="what-gives-kwiscale-" class="anchor" href="#what-gives-kwiscale-"><span class="octicon octicon-link"></span></a>What gives Kwiscale ?</h1>
+
+<p>Kwiscale let you declare Handler methods with the HTTP method. This allows you to declare:</p>
+
+<ul>
+<li>Get()</li>
+<li>Post()</li>
+<li>Head()</li>
+<li>Delete()</li>
+<li>Put()</li>
+</ul><p>Routes are regexp and captured elements are stocked in handler.UrlParams that is a []string.</p>
+
+<p>The handler.Render method takes template path and context to implement. But it adds a nice way to "overide" templates.</p>
+
+<p>Let's take an example. </p>
+
+<p>Append templates directory:</p>
+
+<pre><code>mkdir templates
+</code></pre>
+
+<p>Then create templates/main.html:</p>
+
+<div class="highlight highlight-html"><pre><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>{{ if .title }}{{.title}}{{ else }} Default title {{ end }}<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        {{ template "CONTENT" . }}
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+
+<p>Now create templates/home directory:</p>
+
+<pre><code>mkdir templates/home
+</code></pre>
+
+<p>Create templates/home/welcome.html:</p>
+
+<pre><code>{{ override "main.html" }}
+
+{{ define "CONTENT" }}
+    This the welcome message {{ .msg }}
+{{ end }}
+</code></pre>
+
+<p>In handlers/index.go:</p>
+
+<div class="highlight highlight-go"><pre><span class="kd">func</span> <span class="p">(</span><span class="nx">this</span> <span class="o">*</span><span class="nx">IndexHandler</span><span class="p">)</span> <span class="nx">Get</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">this</span><span class="p">.</span><span class="nx">Render</span><span class="p">(</span><span class="s">"home/welcome.html"</span><span class="p">,</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
+        <span class="s">"title"</span> <span class="p">:</span> <span class="s">"Welcome !!!"</span><span class="p">,</span>
+        <span class="s">"msg"</span>   <span class="p">:</span> <span class="s">"Hello you"</span><span class="p">,</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
