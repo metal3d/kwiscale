@@ -26,6 +26,23 @@ package kwiscale
 
 var ormDriverRegistry = make(map[string]IORM)
 
+// Each ORM data you want to record should be composed
+// with this stcut.
+// Example:
+//
+// type User struct {
+//		ORMData
+//		Name string
+//		Birthdate time.Date
+//		Email string
+// }
+type ORMData struct {
+	// this is mandatory for some db driver as
+	// "gorm" we use for mysql, sqlite3 and pgsql,
+	// Mongo will probably not use this one
+	Id int64
+}
+
 type IORM interface {
 	// ConnectionString declare the connection url (or path) to database
 	ConnectionString(string)
