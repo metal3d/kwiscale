@@ -1,3 +1,16 @@
+
+/!\ Project has moved /!\
+=========================
+
+Please go to 
+https://github.com/kwiscale to see the entire modules
+
+And 
+https://github.com/kwiscale/framework to see the base project.
+
+
+
+
 kwiscale
 ========
 
